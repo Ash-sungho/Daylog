@@ -2,7 +2,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CalendarScreen from './main/CalendarScreen';
-import FeedsScreen from './main/FeedsScreen';
+import FeedsScreen from './main/feed/FeedsScreen';
 import SearchScreen from './main/SearchScreen';
 
 const Tab = createBottomTabNavigator();
@@ -21,6 +21,8 @@ const MainTabNavigation = () => {
           tabBarIcon: ({size, color}) => (
             <Icon name="view-stream" size={size} color={color} />
           ),
+          headerShown: true,
+          headerTitle: '피드',
         }}
       />
       <Tab.Screen
