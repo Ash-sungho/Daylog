@@ -15,7 +15,7 @@ function TransparentCircleButton({name, color, hasMarginRight, onPress}) {
             },
         ]}
         onPress={onPress}
-        android_ripple={{color: '#red'}}>
+        android_ripple={{color: 'white'}}>
         <Icon name={name} size={24} color={color} />
       </Pressable>
     </View>

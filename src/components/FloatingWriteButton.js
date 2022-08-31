@@ -1,13 +1,46 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
-import {View, Pressable, StyleSheet, Platform} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {View, Pressable, StyleSheet, Platform, Animated} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const FloatingWriteButton = () => {
-  const navigation = useNavigation();
+const FloatingWriteButton = ({hidden}) => {
+  const animation = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    // Animated.timing(animation, {
+    //   toValue: hidden ? 1 : 0,
+    //   duration: 300,
+    //   useNativeDriver: true,
+    // }).start();
+    Animated.spring(animation, {
+      toValue: hidden ? 1 : 0,
+      friction: 5,
+      tension: 45,
+      useNativeDriver: true,
+    }).start();
+  }, [hidden, animation]);
 
+  const navigation = useNavigation();
   return (
-    <View style={styles.wrapper}>
+    <Animated.View
+      style={[
+        styles.wrapper,
+        {
+          opacity: animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 0],
+          }),
+        },
+        {
+          transform: [
+            {
+              translateY: animation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 88],
+              }),
+            },
+          ],
+        },
+      ]}>
       <Pressable
         style={({pressed}) => [
           styles.button,
@@ -15,13 +48,13 @@ const FloatingWriteButton = () => {
             opacity: pressed ? 0.6 : 1,
           },
         ]}
-        android_ripple={{color: 'white'}}
+        android_ripple={{color: '#ededed'}}
         onPress={() => {
           navigation.navigate('WriteScreen');
         }}>
         <Icon name="add" size={24} style={styles.icon} />
       </Pressable>
-    </View>
+    </Animated.View>
   );
 };
 
