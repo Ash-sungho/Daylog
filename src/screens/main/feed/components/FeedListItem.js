@@ -1,9 +1,17 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Platform, Pressable, StyleSheet, Text, View} from 'react-native';
 import {formatter} from '../../../../utils/formatter';
 
 const FeedListItem = ({log}) => {
   const {title, body, date} = log || {};
+
+  const nativation = useNavigation();
+
+  const onPress = () => {
+    nativation.navigate('WriteScreen', {log});
+  };
+
   return (
     <View>
       <Pressable
@@ -11,7 +19,8 @@ const FeedListItem = ({log}) => {
           styles.block,
           Platform.OS === 'ios' && pressd && {backgroundColor: '#efefef'},
         ]}
-        android_ripple={{color: '#ededed'}}>
+        android_ripple={{color: '#ededed'}}
+        onPress={onPress}>
         <Text style={styles.date}>{formatter.formatDate(date)}</Text>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.body}>{formatter.truncate(body)}</Text>

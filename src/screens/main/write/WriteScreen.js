@@ -1,15 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
+import {Alert, KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LogContext from '../../../contexts/LogContext';
 import {button} from '../CalendarScreen';
 import WriteEditor from './components/WriteEditor';
 import WriteHeader from './components/WriteHeader';
 
-const WriteScreen = ({navigation}) => {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const {onCreate} = useContext(LogContext);
+const WriteScreen = ({navigation, route}) => {
+  const log = route.params?.log;
+  const [title, setTitle] = useState(log?.title ?? '');
+  const [body, setBody] = useState(log?.body ?? '');
+  const {onCreate, onModify, onRemove} = useContext(LogContext);
 
   const onSave = () => {
     const now = new Date(); // 현재 시간
@@ -17,12 +18,41 @@ const WriteScreen = ({navigation}) => {
     const koreaTimeDiff = 9 * 60 * 60 * 1000; // 한국 시간은 UTC보다 9시간 빠름(9시간의 밀리세컨드 표현)
     const koreaNow = new Date(utcNow + koreaTimeDiff);
 
-    onCreate({
-      title: title,
-      body: body,
-      date: koreaNow.toISOString(),
-    });
+    if (log) {
+      onModify({
+        id: log.id,
+        title: title,
+        body: body,
+        date: log.date,
+      });
+    } else {
+      onCreate({
+        title: title,
+        body: body,
+        date: koreaNow.toISOString(),
+      });
+    }
     navigation.pop();
+  };
+
+  const askRemove = () => {
+    Alert.alert('삭제', '정말로 삭제하시겠어요?', [
+      {
+        text: '취소',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: '삭제',
+        onPress: () => {
+          onRemove({
+            id: log.id,
+          });
+          navigation.pop();
+        },
+        style: 'destructive',
+      },
+    ]);
   };
 
   return (
@@ -30,7 +60,7 @@ const WriteScreen = ({navigation}) => {
       <KeyboardAvoidingView
         style={styles.avoidingView}
         behavior={Platform.select({ios: 'padding', android: undefined})}>
-        <WriteHeader onSave={onSave} />
+        <WriteHeader onSave={onSave} onRemove={askRemove} idEditing={!!log} />
         <WriteEditor
           title={title}
           onChangeTitle={setTitle}

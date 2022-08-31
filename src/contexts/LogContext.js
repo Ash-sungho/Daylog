@@ -4,14 +4,7 @@ import {v4 as uuid} from 'uuid';
 const LogContext = createContext();
 
 export const LogContextProvider = ({children}) => {
-  const [logs, setLogs] = useState([
-    {
-      id: uuid(),
-      title: 'LogTest',
-      body: 'LogBody',
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
-    },
-  ]);
+  const [logs, setLogs] = useState([]);
 
   const onCreate = ({title, body, date}) => {
     const log = {
@@ -24,8 +17,27 @@ export const LogContextProvider = ({children}) => {
     setLogs([log, ...logs]);
   };
 
+  const onModify = modified => {
+    console.log('modified', modified);
+    //log배열을 순회해 id가 일치하면 log를 교체하고 그렇지 않으면 유지
+    const nextlogs = logs.map(log => {
+      return log.id === modified.id ? modified : log;
+    });
+    console.log('nextlogs', nextlogs);
+    setLogs(nextlogs);
+  };
+  const onRemove = removed => {
+    console.log('removed', removed);
+    //log배열을 순회해 id가 일치하면 log를 교체하고 그렇지 않으면 유지
+    const nextlogs = logs.filter(log => {
+      return log.id !== removed.id;
+    });
+    console.log('nextlogs', nextlogs);
+    setLogs(nextlogs);
+  };
+
   return (
-    <LogContext.Provider value={{logs, onCreate}}>
+    <LogContext.Provider value={{logs, onCreate, onModify, onRemove}}>
       {children}
     </LogContext.Provider>
   );
