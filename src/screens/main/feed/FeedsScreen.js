@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import FloatingWriteButton from '../../../components/FloatingWriteButton';
 import LogContext from '../../../contexts/LogContext';
-import {buttonTest} from '../CalendarScreen';
+import {buttonTest} from '../../../calendar/CalendarScreen';
 import FeedList from './components/FeedList';
 
 const FeedsScreen = ({navigation}) => {

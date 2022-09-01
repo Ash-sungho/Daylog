@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Alert, KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LogContext from '../../../contexts/LogContext';
-import {button} from '../CalendarScreen';
+import {button} from '../../../calendar/CalendarScreen';
 import WriteEditor from './components/WriteEditor';
 import WriteHeader from './components/WriteHeader';
 
