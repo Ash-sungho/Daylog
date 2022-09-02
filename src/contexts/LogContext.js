@@ -1,10 +1,31 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useRef, useState} from 'react';
 import {v4 as uuid} from 'uuid';
+import LogStorage from '../utils/storages/LogStorage';
 
 const LogContext = createContext();
 
 export const LogContextProvider = ({children}) => {
+  const initalLogRef = useRef(null);
   const [logs, setLogs] = useState([]);
+
+  useEffect(() => {
+    //useEffect 내에서 async 함수를 만들고 바로 호출
+    //IIFE 패턴
+    (async () => {
+      const savedLogs = await LogStorage.get();
+      if (savedLogs) {
+        initalLogRef.current = savedLogs;
+        setLogs(savedLogs);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (logs === initalLogRef.current) {
+      return;
+    }
+    LogStorage.set(logs);
+  }, [logs]);
 
   const onCreate = ({title, body, date}) => {
     const log = {
