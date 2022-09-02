@@ -1,8 +1,7 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Alert, KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LogContext from '../../../contexts/LogContext';
-import {button} from '../../../calendar/CalendarScreen';
 import WriteEditor from './components/WriteEditor';
 import WriteHeader from './components/WriteHeader';
 
@@ -10,6 +9,7 @@ const WriteScreen = ({navigation, route}) => {
   const log = route.params?.log;
   const [title, setTitle] = useState(log?.title ?? '');
   const [body, setBody] = useState(log?.body ?? '');
+  const [date, setDate] = useState(log ? new Date(log?.date) : new Date());
   const {onCreate, onModify, onRemove} = useContext(LogContext);
 
   const onSave = () => {
@@ -23,13 +23,13 @@ const WriteScreen = ({navigation, route}) => {
         id: log.id,
         title: title,
         body: body,
-        date: log.date,
+        date: date.toISOString(),
       });
     } else {
       onCreate({
         title: title,
         body: body,
-        date: koreaNow.toISOString(),
+        date: date.toISOString(),
       });
     }
     navigation.pop();
@@ -60,7 +60,13 @@ const WriteScreen = ({navigation, route}) => {
       <KeyboardAvoidingView
         style={styles.avoidingView}
         behavior={Platform.select({ios: 'padding', android: undefined})}>
-        <WriteHeader onSave={onSave} onRemove={askRemove} idEditing={!!log} />
+        <WriteHeader
+          onSave={onSave}
+          onRemove={askRemove}
+          idEditing={!!log}
+          date={date}
+          setDate={setDate}
+        />
         <WriteEditor
           title={title}
           onChangeTitle={setTitle}
